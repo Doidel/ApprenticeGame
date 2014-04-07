@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>three.js - pointerlock controls</title>
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+			}
+
+			body {
+				background-color: #9BEBFF;
+				margin: 0;
+				overflow: hidden;
+				font-family: arial;
+			}
+			
+			#marioObject {
+				position: absolute;
+				width: 17px;
+				height: 20px;
+				background-image: url(images/marioSprite.png);
+				background-position: -4px -265px;
+			}
+			
+			#marioGround1 {
+				position: absolute;
+				top: 70px;
+				left: 22px;
+				width: 76px;
+				height: 32px;
+				background-image: url(images/marioSprite.png);
+				background-position: -27px -228px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script src="js/box2d.js"></script>
+        <script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
+		
+		<div id="marioObject" style="left: 50px; top:50px;"></div>
+		
+		
+		<div id="marioGround1">
+		</div>
+		
+		
+		<script>
+      
+
+			
+            var world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0));
+			var marioObject = $('#marioObject');
+			
+			//mario's sprite animation
+			var marioSpritePosition = 0;
+			setInterval(function() {
+				var yPos = (marioSpritePosition / 10) >= 1 ? -265 : -289;
+				marioObject.css('background-position-x', -3 - ((marioSpritePosition % 10) * 19.35));
+				marioObject.css('background-position-y', yPos);
+				marioSpritePosition = (marioSpritePosition + 1) % 20;
+			}, 50);
+			
+			var bodyDef = new Box2D.b2BodyDef();
+			bodyDef.set_type(Box2D.b2_dynamicBody);
+			var dynamicBody = world.CreateBody(bodyDef);
+
+			
+			var shape = new Box2D.b2CircleShape({ radius: 0.5 + Math.random() * 1 });
+			dynamicBody.CreateFixture(shape);
+            //shapes[shape.id] = shape;
+            
+            var init
+
+			var loop = {
+			    step: function() {
+			        var stepRate = 1 / 60;
+			        world.Step(stepRate, 10, 10);
+			        world.ClearForces();
+			    },
+			    update: function () {            
+			        for (var b = world.GetBodyList(); b; b = b.m_next) {
+			            if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
+			                shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
+			            }
+			        }
+			        needToDraw = true;
+			    },
+			    draw: function() {
+			        if (!needToDraw) return;
+			        if (!debug) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+			        for (var i in shapes) {
+			            shapes[i].draw(ctx);
+			        }
+			        needToDraw = false;
+			    }
+			};
+
+			(function run() {
+			    loop.step();
+			    loop.update();
+			    loop.draw();
+			    requestAnimFrame(run);
+			})();
+			
+			
+
+			$(document).keydown(function( event ) {
+				console.log('What is the key id of the key we are pressing? ', event.which);
+				switch (event.which) {
+					case 39:
+						//pressing the key to the right!
+					break;
+				}
+			});
+			
+		</script>
+	</body>
+</html>
