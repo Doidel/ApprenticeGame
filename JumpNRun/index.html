@@ -37,7 +37,7 @@
 		</style>
 	</head>
 	<body>
-		<script src="js/box2d.js"></script>
+        <script src="js/box2d.js" type="text/javascript"></script>
         <script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
 		
 		<div id="marioObject" style="left: 50px; top:50px;"></div>
@@ -48,13 +48,11 @@
 		
 		
 		<script>
-      
+			
+			
+            // mario's sprite animation
 
-			
-            var world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0));
-			var marioObject = $('#marioObject');
-			
-			//mario's sprite animation
+            var marioObject = $('#marioObject');
 			var marioSpritePosition = 0;
 			setInterval(function() {
 				var yPos = (marioSpritePosition / 10) >= 1 ? -265 : -289;
@@ -62,17 +60,42 @@
 				marioObject.css('background-position-y', yPos);
 				marioSpritePosition = (marioSpritePosition + 1) % 20;
 			}, 50);
+
+
+
+
+            // physics
+
+			var world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -10.0));
 			
-			var bodyDef = new Box2D.b2BodyDef();
+			var bodyDef = new Box2D.Dynamics.b2BodyDef();
 			bodyDef.set_type(Box2D.b2_dynamicBody);
-			var dynamicBody = world.CreateBody(bodyDef);
+			var dynamicBody = ig.world.CreateBody(bodyDef);
 
 			
-			var shape = new Box2D.b2CircleShape({ radius: 0.5 + Math.random() * 1 });
-			dynamicBody.CreateFixture(shape);
+
+			var fixture = new Box2D.Dynamics.b2FixtureDef;
+			fixture.shape = new Box2D.Collision.Shapes.b2PolygonShape();
+			fixture.shape.SetAsBox(5, 5);
+
+			fixture.density = 1.0;
+			fixture.friction = 0.5;
+			fixture.restitution = 0.3;
+
+			body.CreateFixture(fixture);
+
+
+            
+			//var shape = new Box2D.b2CircleShape({ radius: 0.5 + Math.random() * 1 });
+			//dynamicBody.CreateFixture(shape);
             //shapes[shape.id] = shape;
             
-            var init
+			
+
+			var init = {
+
+
+			};
 
 			var loop = {
 			    step: function() {
@@ -80,24 +103,50 @@
 			        world.Step(stepRate, 10, 10);
 			        world.ClearForces();
 			    },
-			    update: function () {            
+			    /*update: function () {            
 			        for (var b = world.GetBodyList(); b; b = b.m_next) {
 			            if (b.IsActive() && typeof b.GetUserData() !== 'undefined' && b.GetUserData() != null) {
 			                shapes[b.GetUserData()].update(box2d.get.bodySpec(b));
 			            }
 			        }
 			        needToDraw = true;
+			    },*/
+			    update: function () {
+			        ig.world.Step(ig.system.tick, 6, 6);
+			        if (ig.input.state('jump')) {
+			            var force = new Box2D.Common.Math.b2Vec2(0, -30);
+			            this.body.ApplyForce(force, this.body.GetPosition());
+			        }
+			        this.parent();
 			    },
 			    draw: function() {
-			        if (!needToDraw) return;
-			        if (!debug) ctx.clearRect(0, 0, canvas.width, canvas.height);
+			        //if (!needToDraw) return;
+			        //if (!debug) ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-			        for (var i in shapes) {
+			        /*for (var i in shapes) {
 			            shapes[i].draw(ctx);
-			        }
-			        needToDraw = false;
+			        }*/
+			        //needToDraw = false;
+			        marioObject.css({
+			            'top': y,
+                        'left': x
+			        })
 			    }
 			};
+
+			EntityCrate = ig.Box2DEntity.extend({
+			    size: { x: 8, y: 8 },
+
+			    // Collision is already handled by Box2D!
+			    collides: ig.Entity.COLLIDES.NEVER,
+
+			    animSheet: new ig.AnimationSheet('media/crate.png', 8, 8),
+
+			    init: function (x, y, settings) {
+			        this.addAnim('idle', 1, [0]);
+			        this.parent(x, y, settings);
+			    }
+			});
 
 			(function run() {
 			    loop.step();
@@ -106,13 +155,29 @@
 			    requestAnimFrame(run);
 			})();
 			
-			
+			for (var i = 0; i < 10; ++i) {
+			    if (Math.random() > 0.5) {
+			        fixDef.shape = new b2PolygonShape;
+			        fixDef.shape.SetAsBox(
+                          Math.random() + 0.1 //half width
+                       , Math.random() + 0.1 //half height
+                    );
+			    } else {
+			        fixDef.shape = new b2CircleShape(
+                        Math.random() + 0.1 //radius
+                    );
+			    }
+			    bodyDef.position.x = Math.random() * 25;
+			    bodyDef.position.y = Math.random() * 10;
+			    world.CreateBody(bodyDef).CreateFixture(fixDef);
+			}
 
 			$(document).keydown(function( event ) {
 				console.log('What is the key id of the key we are pressing? ', event.which);
 				switch (event.which) {
 					case 39:
-						//pressing the key to the right!
+					    //pressing the key to the right!
+
 					break;
 				}
 			});
