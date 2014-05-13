@@ -86,11 +86,17 @@
 			bodyDef.set_type(Box2D.b2_dynamicBody);
 			bodyDef.set_position( new Box2D.b2Vec2(20.0, 400.0) );
 			var marioBody = world.CreateBody(bodyDef);
+			marioBody.SetFixedRotation(true);
 
 			var circleShape = new Box2D.b2CircleShape();
-			circleShape.set_m_radius( 0.5 );
-			marioBody.CreateFixture( circleShape, 1.0 );
 			
+			var marioFixtureDef = new Box2D.b2FixtureDef();
+			circleShape.set_m_radius( 5 );
+			marioFixtureDef.set_density( 2.5 );
+			marioFixtureDef.set_friction( 1 );
+			marioFixtureDef.set_shape( circleShape );
+			marioBody.CreateFixture( marioFixtureDef );
+						
 			
 			// a platform
 			
@@ -102,6 +108,7 @@
 			var edgeShape = new Box2D.b2EdgeShape();
 			edgeShape.Set( new Box2D.b2Vec2( -20, 0 ), new Box2D.b2Vec2( 20, 0 ) );
 			var fixtureDef = new Box2D.b2FixtureDef();
+			fixtureDef.set_friction( 1 );
 			fixtureDef.set_shape( edgeShape );
 			groundBody.CreateFixture( fixtureDef );
 			
