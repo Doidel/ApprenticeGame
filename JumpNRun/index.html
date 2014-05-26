@@ -9,30 +9,41 @@
 				height: 100%;
 			}
 
-			body {
-				background-color: #9BEBFF;
-				margin: 0;
-				overflow: hidden;
-				font-family: arial;
-			}
-			
-			#marioObject {
-				position: absolute;
-				width: 17px;
-				height: 20px;
-				background-image: url(images/marioSprite.png);
-				background-position: -4px -265px;
-			}
-			
-			#marioGround1 {
-				position: absolute;
-				bottom: 318px; /* 350 - 32 */
-				left: -18px; /* 20 - 38 */
-				width: 76px;
-				height: 32px;
-				background-image: url(images/marioSprite.png);
-				background-position: -27px -228px;
-			}
+            body {
+                background-color: #9BEBFF;
+                margin: 0;
+                overflow: hidden;
+                font-family: arial;
+                background-image: url(images/backgroundlevel1-4.png);
+                background-repeat: no-repeat;
+            }
+
+            #marioObject {
+                position: absolute;
+                width: 27.5px;
+                height: 37.5px;
+                background-image: url(images/stickmanSprite275right.png);
+                background-position: 0px 0px;
+            }
+
+            /*#marioObject.left {
+                position: absolute;
+                width: 27.5px;
+                height: 37.5px;
+                background-image: url(images/stickmanSprite275left.png);
+                background-position: 0px 0px;
+            }*/
+
+            #marioGround1 {
+                position: absolute;
+                bottom: 318px; /* 350 - 32 */
+                left: -18px; /* 20 - 38 */
+                width: 76px;
+                height: 32px;
+                background-image: url(images/marioSprite.png);
+                background-position: -27px -228px;
+            }
+
 
 		</style>
 	</head>
@@ -42,9 +53,9 @@
 		
 		<div id="marioObject" style="left: 50px; bottom: 550px;"></div>
 		
-		
 		<div id="marioGround1">
 		</div>
+
 		
 		
 		<script>
@@ -62,14 +73,15 @@
 			
 			
             // mario's sprite animation
-
+			//if (press)
             var marioObject = $('#marioObject');
 			var marioSpritePosition = 0;
-			setInterval(function() {
-				var yPos = (marioSpritePosition / 10) >= 1 ? -265 : -289;
-				marioObject.css('background-position-x', -3 - ((marioSpritePosition % 10) * 19.35));
-				marioObject.css('background-position-y', yPos);
-				marioSpritePosition = (marioSpritePosition + 1) % 20;
+			setInterval(function() {				
+			    marioSpritePosition--;
+			    marioSpritePosition += 11;
+				marioSpritePosition %= 11;
+
+				marioObject.css('background-position-x', marioSpritePosition * 27.5);
 			}, 50);
 
 
@@ -87,6 +99,8 @@
 			bodyDef.set_position( new Box2D.b2Vec2(20.0, 400.0) );
 			var marioBody = world.CreateBody(bodyDef);
 			marioBody.SetFixedRotation(true);
+			//var marioBodyleft = world.CreateBody(bodyDef);
+			//marioBodyleft.SetFixedRotation(true);
 
 			var circleShape = new Box2D.b2CircleShape();
 			
@@ -95,12 +109,39 @@
 			marioFixtureDef.set_density( 2.5 );
 			marioFixtureDef.set_friction( 1 );
 			marioFixtureDef.set_shape( circleShape );
-			marioBody.CreateFixture( marioFixtureDef );
+			marioBody.CreateFixture(marioFixtureDef);
+			//marioBodyleft.CreateFixture(marioFixtureDef);
 						
 			
 			// a platform
-			
-			var platformBodyDef = new Box2D.b2BodyDef();
+			var Platform = function() {
+			    
+			}
+
+			Platform.prototype.getPlatform = function (ax, ay, bx, by) {
+			    var platformBodyDef = new Box2D.b2BodyDef();
+			    platformBodyDef.set_position(new Box2D.b2Vec2(20.0, 350.0));
+
+			    var groundBody = world.CreateBody(platformBodyDef);
+
+			    var edgeShape = new Box2D.b2EdgeShape();
+			    edgeShape.Set(new Box2D.b2Vec2(ax, ay), new Box2D.b2Vec2(bx, by));
+			    var fixtureDef = new Box2D.b2FixtureDef();
+			    fixtureDef.set_friction(1);
+			    fixtureDef.set_shape(edgeShape);
+			    groundBody.CreateFixture(fixtureDef);
+		    
+			}
+
+			var platform1 = new Platform();
+			platform1.getPlatform(-20, 0, 20, 0);
+			platform1.getPlatform(20, 0, 60, 0);
+            platform1.getPlatform(60, -30, 500, 100);
+            platform1.getPlatform(500, -100, 700, -100);
+            platform1.getPlatform(700, -150, 900, 0);
+            
+
+			/*var platformBodyDef = new Box2D.b2BodyDef();
 			platformBodyDef.set_position( new Box2D.b2Vec2(20.0, 350.0) );
 			
 			var groundBody = world.CreateBody( platformBodyDef );
@@ -110,11 +151,10 @@
 			var fixtureDef = new Box2D.b2FixtureDef();
 			fixtureDef.set_friction( 1 );
 			fixtureDef.set_shape( edgeShape );
-			groundBody.CreateFixture( fixtureDef );
+			groundBody.CreateFixture( fixtureDef );*/
 			
 			
-			
-			
+            
 			
 			// game loop
 
@@ -124,12 +164,46 @@
 			        world.Step(stepRate, 10, 10);
 			        //world.ClearForces();
 			    },
+
+			    
+			
 			    update: function () {            
 			        if (gameControls.right) {
 						var v = marioBody.GetLinearVelocity();
-						v.set_x(40);
+						v.set_x(500);
 						marioBody.SetLinearVelocity( v );
-					}
+			        }
+			        if (gameControls.jump) {
+			            var v = marioBody.GetLinearVelocity();
+			            v.set_y(100000);
+			            marioBody.SetLinearVelocity(v);
+			        }
+
+			        
+
+			        /*if (gameControls.jump) {
+			            
+			            var jump = 0;
+			            var jumpspeed = 10000;
+			            var jumptimer = 0;
+
+			            if (jump == 1) {
+			                jumptimer = jumptimer + 1;
+			                if (jumptimer >= 50) {
+			                    jumptimer = 0;
+			                    jump = 0;
+			                }
+			            } else {
+			                marioBody.velocity.y = jumpspeed;
+			                jump = 1;
+			            }
+			        }**/
+
+			        if (gameControls.left) {
+			            var v = marioBody.GetLinearVelocity();
+			            v.set_x(-500);
+			            marioBody.SetLinearVelocity(v);
+			        }
 			    },
 			    draw: function() {
 			        marioObject.css({
@@ -138,23 +212,31 @@
 			        })
 			    }
 			};
-
-			
+            		
 			
 			
 			var gameControls = {
-				right: false
+			    right: true,
+			    jump: false,
+                left: false
 			};
-			
+            				
 			$(document).keydown(function( event ) {
 				console.log('What is the key id of the key we are pressing? ', event.which);
 				switch (event.which) {
 					case 39:
 					
 					    //pressing the key to the right!
-						gameControls.right = true;
-						
-					break;
+					    gameControls.right = false;
+                     						                          
+					    break;
+				    case 32:
+				        gameControls.jump = true;
+
+				        break;
+				    case 37:
+				        gameControls.left = true;
+				        break;
 				}
 			});
 
@@ -163,9 +245,15 @@
 					case 39:
 					
 					    //stop pressing the key to the right!
-						gameControls.right = false;
+						gameControls.right = true;
 						
-					break;
+						break;
+				    case 32:
+				        gameControls.jump = false;
+				        break;
+				    case 37:
+				        gameControls.left = false;
+				        break;
 				}
 			});
 			
