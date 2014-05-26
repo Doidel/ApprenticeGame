@@ -90,20 +90,20 @@
 
 			
 
-			var world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -200.0));
+			var world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -9.81));
 			
 			
 			// mario
 			var bodyDef = new Box2D.b2BodyDef();
 			bodyDef.set_type(Box2D.b2_dynamicBody);
-			bodyDef.set_position( new Box2D.b2Vec2(20.0, 400.0) );
+			bodyDef.set_position( new Box2D.b2Vec2(0.2, 4.0) );
 			var marioBody = world.CreateBody(bodyDef);
 			marioBody.SetFixedRotation(true);
 			
 			var circleShape = new Box2D.b2CircleShape();
 			
 			var marioFixtureDef = new Box2D.b2FixtureDef();
-			circleShape.set_m_radius( 5 );
+			circleShape.set_m_radius( 0.05 );
 			marioFixtureDef.set_density( 2.5 );
 			marioFixtureDef.set_friction( 0.5 );
 			marioFixtureDef.set_shape( circleShape );
@@ -118,7 +118,7 @@
 
 			Platform.prototype.getPlatform = function (ax, ay, bx, by) {
 			    var platformBodyDef = new Box2D.b2BodyDef();
-			    platformBodyDef.set_position(new Box2D.b2Vec2(20.0, 350.0));
+			    platformBodyDef.set_position(new Box2D.b2Vec2(0.2, 3.5));
 
 			    var groundBody = world.CreateBody(platformBodyDef);
 
@@ -132,7 +132,7 @@
 			}
 
 			var platform1 = new Platform();
-			platform1.getPlatform(-20, 0, 20, 0);
+			platform1.getPlatform(-0.2, 0, 0.2, 0);
 			/*platform1.getPlatform(20, 0, 60, 0);
             platform1.getPlatform(60, -30, 500, 100);
             platform1.getPlatform(500, -100, 700, -100);
@@ -162,38 +162,40 @@
 			        world.Step(stepRate, 10, 10);
 			        //world.ClearForces();
 			    },
-
-			    
 			
-			    update: function () {            
-			        if (gameControls.right) {
+			    update: function () {
+					var v = marioBody.GetLinearVelocity();
+					var impulse = new Box2D.b2Vec2(0, 0);
+					
+					//v.set_x(5);
+					console.log(v.get_x());
+					
+			        if (gameControls.right && v.get_x() <= 5) {
 
-			            var force = marioBody.GetMass() * 10 / (1 / 60.0);
+			            var force = marioBody.GetMass() * 2 / (1 / 60.0);
 			            force /= 6.0;
-			            marioBody.ApplyForce(new Box2D.b2Vec2(0, 10000), marioBody.GetWorldCenter());
-			            
-						/*var v = marioBody.GetLinearVelocity();
-						v.set_x(200);
-						marioBody.SetLinearVelocity(v);*/
+			            marioBody.ApplyForce(new Box2D.b2Vec2(force, 0), marioBody.GetWorldCenter());
 						
 			        }
 
 			        if (gameControls.jump == true) {
-			            var impulse = marioBody.GetMass() * 10;
-			            marioBody.ApplyLinearImpulse(new Box2D.b2Vec2(0, impulse), marioBody.GetWorldCenter());
-
+			            impulse.set_y(marioBody.GetMass() * 10);
+						gameControls.jump = false;
 			        }
 			   
 			        if (gameControls.left) {
-			            var v = marioBody.GetLinearVelocity();
+			            /*var v = marioBody.GetLinearVelocity();
 			            v.set_x(-500);
-			            marioBody.SetLinearVelocity(v);
+			            marioBody.SetLinearVelocity(v);*/
 			        }
+					
+					marioBody.ApplyLinearImpulse(impulse, marioBody.GetWorldCenter());
 			    },
+				
 			    draw: function() {
 			        marioObject.css({
-			            'bottom': marioBody.GetPosition().get_y(),
-                        'left': marioBody.GetPosition().get_x() - 7 // -7 because we want him centered
+			            'bottom': marioBody.GetPosition().get_y() * 100,
+                        'left': marioBody.GetPosition().get_x() * 100 - 7 // -7 because we want him centered
 			        })
 			    }
 			};
@@ -217,7 +219,6 @@
 					    break;
 				    case 32:
 				        gameControls.jump = true;
-				             
 				            
 				        break;
 				    case 37:
@@ -231,7 +232,7 @@
 					case 39:
 					
 					    //stop pressing the key to the right!
-						gameControls.right = true;
+						//gameControls.right = false;
 						
 						break;
 				    case 32:
