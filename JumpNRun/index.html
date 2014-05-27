@@ -14,8 +14,8 @@
                 margin: 0;
                 overflow: hidden;
                 font-family: arial;
-                background-image: url(images/backgroundlevel1-4.png);
-                background-repeat: no-repeat;
+                background-image: url(images/background47.png);
+                
             }
 
             #marioObject {
@@ -26,13 +26,6 @@
                 background-position: 0px 0px;
             }
 
-            /*#marioObject.left {
-                position: absolute;
-                width: 27.5px;
-                height: 37.5px;
-                background-image: url(images/stickmanSprite275left.png);
-                background-position: 0px 0px;
-            }*/
 
             #marioGround1 {
                 position: absolute;
@@ -40,8 +33,22 @@
                 left: -18px; /* 20 - 38 */
                 width: 76px;
                 height: 32px;
-                background-image: url(images/marioSprite.png);
+                background-image: url(images/stone.png);
                 background-position: -27px -228px;
+            }
+
+            .platform {
+                width: 200px;
+                height: 1px;
+                border-top: 1px solid blue;
+                -webkit-transform: rotate(36deg);
+                -moz-transform: rotate(36deg);
+                -o-transform: rotate(36deg);
+                -ms-transform: rotate(36deg);
+                transform: rotate(36deg);
+                position: absolute;
+                top: 50px;
+                left: 250px;
             }
 
 
@@ -50,11 +57,14 @@
 	<body>
         <script src="js/box2d.js" type="text/javascript"></script>
         <script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
+        <script src="js/drawPlatform.js" type="text/javascript"></script>
 		
 		<div id="marioObject" style="left: 50px; bottom: 550px;"></div>
 		
 		<div id="marioGround1">
 		</div>
+
+        <div class="platform"></div>
 
 		
 		
@@ -72,6 +82,7 @@
 			})();
 			
 			
+
             // mario's sprite animation
 			//if (press)
             var marioObject = $('#marioObject');
@@ -84,7 +95,7 @@
 				marioObject.css('background-position-x', marioSpritePosition * 27.5);
 			}, 50);
 
-
+			
 			
 			/***********************************PHYSICS*************************************/
 
@@ -112,31 +123,11 @@
 						
 			
 			// a platform
-			var Platform = function() {
-			    
-			}
 
-			Platform.prototype.getPlatform = function (ax, ay, bx, by) {
-			    var platformBodyDef = new Box2D.b2BodyDef();
-			    platformBodyDef.set_position(new Box2D.b2Vec2(0.2, 3.5));
 
-			    var groundBody = world.CreateBody(platformBodyDef);
-
-			    var edgeShape = new Box2D.b2EdgeShape();
-			    edgeShape.Set(new Box2D.b2Vec2(ax, ay), new Box2D.b2Vec2(bx, by));
-			    var fixtureDef = new Box2D.b2FixtureDef();
-			    fixtureDef.set_friction(1);
-			    fixtureDef.set_shape(edgeShape);
-			    groundBody.CreateFixture(fixtureDef);
-		    
-			}
-
-			var platform1 = new Platform();
-			platform1.getPlatform(-0.2, 0, 0.2, 0);
-			/*platform1.getPlatform(20, 0, 60, 0);
-            platform1.getPlatform(60, -30, 500, 100);
-            platform1.getPlatform(500, -100, 700, -100);
-            platform1.getPlatform(700, -150, 900, 0);*/
+			var platform1 = new Platform(-0.2, 0, 1.7, 0);
+            var platform2 = new Platform(2.5, 1.4, 5, 1.4);
+            
             
 
 			/*var platformBodyDef = new Box2D.b2BodyDef();
@@ -172,20 +163,20 @@
 					
 			        if (gameControls.right && v.get_x() <= 5) {
 
-			            var force = marioBody.GetMass() * 2 / (1 / 60.0);
-			            force /= 6.0;
+			            var force = marioBody.GetMass() * 1 / (1 / 60.0);
+			            force /= 7.0;
 			            marioBody.ApplyForce(new Box2D.b2Vec2(force, 0), marioBody.GetWorldCenter());
 						
 			        }
 
 			        if (gameControls.jump == true) {
-			            impulse.set_y(marioBody.GetMass() * 10);
+			            impulse.set_y(marioBody.GetMass() * 5.3);
 						gameControls.jump = false;
 			        }
 			   
 			        if (gameControls.left) {
 			            /*var v = marioBody.GetLinearVelocity();
-			            v.set_x(-500);
+			            v.set_x(-1);
 			            marioBody.SetLinearVelocity(v);*/
 			        }
 					
