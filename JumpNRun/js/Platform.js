@@ -8,9 +8,12 @@ var Platform = function (ax, ay, bx, by) {
     ay -= y;
     by -= y;
 
+    
+
     var platformBodyDef = new Box2D.b2BodyDef();
     platformBodyDef.set_position(new Box2D.b2Vec2(x, y));
-
+    platformBodyDef.set_type(Box2D.b2_kinematicBody);
+    
     var groundBody = world.CreateBody(platformBodyDef);
 
     var edgeShape = new Box2D.b2EdgeShape();
@@ -22,9 +25,9 @@ var Platform = function (ax, ay, bx, by) {
 
     groundBody.CreateFixture(fixtureDef);
 
-    var rotation = Math.atan((by - ay) / (bx - ax));
+    var rotation = -1*(Math.atan((by - ay) / (bx - ax))*100);
    
-    var width = Math.sqrt(Math.pow(bx - ax)  + Math.pow(by - ay))*100;
+    var width = Math.sqrt((bx - ax)*(bx - ax) + (by - ay)*(by - ay)) * 100;
     
     var bottom = (ay + y)*100;
     var left = (ax + x)*100;
@@ -34,11 +37,11 @@ var Platform = function (ax, ay, bx, by) {
 };
 
 Platform.prototype.draw = function (width, rotation, bottom, left) {
-   /** $('body').append("<div class='platform' style='width:" + width + "px; -webkit-transform: rotate(" + rotation +
+   /**$('body').append("<div class='platform' style='width:" + width + "px; -webkit-transform: rotate(" + rotation +
         "deg); -moz-transform: rotate(" + rotation + "deg); -o-transform: rotate(" + rotation +
         "deg); -ms-transform: rotate(" + rotation + "deg); transform: rotate(" + rotation +
         "deg); bottom:" + bottom + "px; left:" + left + "px;'></div>");**/
-
+    console.log(rotation)
     var el = $("<div/>");
     el.addClass("platform");
     var styles = {
