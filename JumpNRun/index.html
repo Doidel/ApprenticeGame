@@ -75,7 +75,7 @@
 				stickmanSpritePosition %= 11;
 
 				stickmanObject.css('background-position-x', stickmanSpritePosition * 27.5);
-			}, 50);
+			}, 100);
 
 			var x = 0;
 			setInterval(function () {
@@ -97,6 +97,7 @@
 			bodyDef.set_position( new Box2D.b2Vec2(0.2, 4.0) );
 			var stickmanBody = world.CreateBody(bodyDef);
 			stickmanBody.SetFixedRotation(true);
+            
 			
 			var circleShape = new Box2D.b2CircleShape();
 			
@@ -127,20 +128,31 @@
 			        var stepRate = 1 / 120;
 			        world.Step(stepRate, 10, 10);
 			        //world.ClearForces();
+			        platform1._update();
+			        platform2._update();
+			        platform3._update();
+			        platform4._update();
 			    },
 			
 			    update: function () {
-			        var v = stickmanBody.GetLinearVelocity(1 / 1);
-                    var impulse = new Box2D.b2Vec2(0, 0);
+			        var v = stickmanBody.GetLinearVelocity();
+			        var impulse = new Box2D.b2Vec2(0, 0);			        
 					
+			        var v = stickmanBody.GetLinearVelocity();
+			        v.set_x(1);
+			        stickmanBody.SetLinearVelocity(v);
+
 					//v.set_x(5);
 					console.log(v.get_x());
 					
 					if (gameControls.right && v.get_x()<= 5) {
 
-			            var force = stickmanBody.GetMass() * 1 / (1 / 60);
+			            /*var force = stickmanBody.GetMass() * 1 / (1 / 60);
 			            force /= 7.0;
-			            stickmanBody.ApplyForce(new Box2D.b2Vec2(force, 0), stickmanBody.GetWorldCenter());
+			            stickmanBody.ApplyForce(new Box2D.b2Vec2(force, 0), stickmanBody.GetWorldCenter());*/
+					    /*var v = stickmanBody.GetLinearVelocity();
+					    v.set_x(1);
+					    stickmanBody.SetLinearVelocity(v);*/
 						
 			        }
 

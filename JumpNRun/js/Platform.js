@@ -1,5 +1,15 @@
 var Platform = function (ax, ay, bx, by) {
 
+    this.options = {
+        element: undefined,
+        width: 0,
+        rotation: 0,
+        bottom: 0,
+        left: 0,
+        ax: 0,
+        ay: 0
+    }
+
     var x = Math.min(ax, bx);
     ax -= x;
     bx -= x;
@@ -8,13 +18,14 @@ var Platform = function (ax, ay, bx, by) {
     ay -= y;
     by -= y;
 
-    
-
     var platformBodyDef = new Box2D.b2BodyDef();
     platformBodyDef.set_position(new Box2D.b2Vec2(x, y));
-    platformBodyDef.set_type(Box2D.b2_kinematicBody);
+    //platformBodyDef.set_type(Box2D.b2_dynamicBody);
     
-    var groundBody = world.CreateBody(platformBodyDef);
+    platformBodyDef.set_type(Box2D.b2_kinematicBody);
+    platformBodyDef.set_linearVelocity(new Box2D.b2Vec2(-1, 0.0));
+    
+    this.groundBody = world.CreateBody(platformBodyDef);
 
     var edgeShape = new Box2D.b2EdgeShape();
     edgeShape.Set(new Box2D.b2Vec2(ax, ay), new Box2D.b2Vec2(bx, by));
@@ -23,41 +34,84 @@ var Platform = function (ax, ay, bx, by) {
     fixtureDef.set_friction(1);
     fixtureDef.set_shape(edgeShape);
 
-    groundBody.CreateFixture(fixtureDef);
+    this.groundBody.CreateFixture(fixtureDef);
 
-    var rotation = -1*(Math.atan((by - ay) / (bx - ax))*100);
-   
-    var width = Math.sqrt((bx - ax)*(bx - ax) + (by - ay)*(by - ay)) * 100;
     
-    var bottom = (ay + y)*100;
-    var left = (ax + x)*100;
 
-    this.draw(width, rotation, bottom, left);
 
+    this.options.rotation = -1*(Math.atan((by - ay) / (bx - ax))*100);
+   
+    this.options.width = Math.sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay)) * 100;
+    
+    this.options.bottom = (ay + y) * 100;
+    this.options.left = (ax + x) * 100;
+
+    this.draw();
 };
 
-Platform.prototype.draw = function (width, rotation, bottom, left) {
-   /**$('body').append("<div class='platform' style='width:" + width + "px; -webkit-transform: rotate(" + rotation +
-        "deg); -moz-transform: rotate(" + rotation + "deg); -o-transform: rotate(" + rotation +
-        "deg); -ms-transform: rotate(" + rotation + "deg); transform: rotate(" + rotation +
-        "deg); bottom:" + bottom + "px; left:" + left + "px;'></div>");**/
-    console.log(rotation)
-    var el = $("<div/>");
-    el.addClass("platform");
+Platform.prototype.calculateForDraw = function (ax, ay, bx, by) {
+
+    /*for(var i = 0; i < platforms.size; i++) {
+        this.platform = platforms.get(i);
+        platform.update(Math.max(1/30.0, Gdx.graphics.getDeltaTime()));
+    }*/
+
+    /*var w = this.groundBody.GetLinearVelocity();
+    w.set_x(-1);
+    this.groundBody.SetLinearVelocity(w);*/
+
+    var rotation = -1 * (Math.atan((by - ay) / (bx - ax)) * 100);
+
+    var width = Math.sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay)) * 100;
+
+    var bottom = (ay + y) * 100;
+    var left = (ax + x) * 100;
+
+    this.options.width = width;
+    this.options.rotation = rotation;
+    this.options.left = left;
+    this.options.bottom = bottom;
+};
+//move
+//1. move the platform
+//2. draw it
+
+Platform.prototype.draw = function () {
+
+    if (this.options.element == undefined) {
+        this.options.element = $("<div/>");
+        this.options.element.addClass("platform");
+        $('body').append(this.options.element);
+    }
     var styles = {
-        'width': width + "px",
-        '-webkit-transform': "rotate(" + rotation + "deg)",
-        '-moz-transform': "rotate(" + rotation + "deg)",
-        '-o-transform': "rotate(" + rotation + "deg)",
-        '-ms-transform': "rotate(" + rotation + "deg)",
-        'transform': "rotate(" + rotation + "deg)",
-        'bottom': bottom + "px",
-        'left': left + "px"
+        'width': this.options.width + "px",
+        '-webkit-transform': "rotate(" + this.options.rotation + "deg)",
+        '-moz-transform': "rotate(" + this.options.rotation + "deg)",
+        '-o-transform': "rotate(" + this.options.rotation + "deg)",
+        '-ms-transform': "rotate(" + this.options.rotation + "deg)",
+        'transform': "rotate(" + this.options.rotation + "deg)",
+        'bottom': this.options.bottom + "px",
+        'left': this.options.left + "px"
     };
-    el.css(styles);
-
-    $('body').append(el);
+    this.options.element.css(styles);
 
 };
 
 
+
+/**
+ * Updates the platform with the box2d positions
+ */
+Platform.prototype._update = function () {
+    //get Position 
+    var x = this.groundBody.GetPosition().get_x();
+    var y = this.groundBody.GetPosition().get_y();
+
+    var bottom = (this.options.ay + y) * 100;
+    var left = (this.options.ax + x) * 100;
+
+    this.options.left = left;
+    this.options.bottom = bottom;
+    
+    this.draw()
+};
