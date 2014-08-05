@@ -14,8 +14,15 @@
                 margin: 0;
                 overflow: hidden;
                 font-family: arial;
-                background-image: url(images/background47.png);
                 
+                
+            }
+
+            .level {
+                background-image: url(images/background47.png);
+                position: absolute;
+                height: 100%;
+                width: 400%;
             }
 
             #stickmanObject {
@@ -40,19 +47,104 @@
                 left: 250px;
             }
 
+            #transparentBackground{
+                position: absolute;
+                height: 100%;
+                width: 400%;
+                bottom: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            #menuBackground{
+                background-color: rgba(0,0,0, 0.8);
+                margin-left:auto;
+                margin-right:auto;
+                width: 50%;
+                height: 50%;
+                position: relative;
+
+            }
+
+            #mainMenu{
+                position: absolute;
+                margin-top:0px;
+                font:bold 12px arial, verdana;
+                text-align: center;
+                color: white;
+            }
+
+            #mainMenu > button{
+                position:relative;
+            }
+
+            #btn {
+                background: #060b0f;
+                background-image: -webkit-linear-gradient(top, #060b0f, #2980b9);
+                background-image: -moz-linear-gradient(top, #060b0f, #2980b9);
+                background-image: -ms-linear-gradient(top, #060b0f, #2980b9);
+                background-image: -o-linear-gradient(top, #060b0f, #2980b9);
+                background-image: linear-gradient(to bottom, #060b0f, #2980b9);
+                -webkit-border-radius: 12;
+                -moz-border-radius: 12;
+                border-radius: 12px;
+                font-family: Courier New;
+                color: #ffffff;
+                font-size: 23px;
+                padding: 10px 20px 10px 20px;
+                text-decoration: none;
+            }
+
+            #btn:hover {
+                background: #060b0f;
+                background-image: -webkit-linear-gradient(top, #060b0f, #14364f);
+                background-image: -moz-linear-gradient(top, #060b0f, #14364f);
+                background-image: -ms-linear-gradient(top, #060b0f, #14364f);
+                background-image: -o-linear-gradient(top, #060b0f, #14364f);
+                background-image: linear-gradient(to bottom, #060b0f, #14364f);
+                text-decoration: none;
+            }
+
+            p{
+                font-family: Courier New;
+                color: #ffffff;
+                font-size: 23px;
+
+            }
+
 
 		</style>
 	</head>
 	<body>
         <script src="js/box2d.js" type="text/javascript"></script>
-        <script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
+        <script src="js/jquery-1.11.1.min.js" type="text/javascript"></script>
         <script src="js/Platform.js" type="text/javascript"></script>
-		
-		<div id="stickmanObject" style="left: 50px; bottom: 550px;"></div>
+        <script src="js/sly.min.js"></script>
         
-	
+          
+        <div class="level">
+             <div id="stickmanObject" style="left: 50px; bottom: 550px;"></div>
+        </div>
+
+        <div id="transparentBackground">
+            
+        </div>
+        
+        <div id="menuBackground">
+            <div id="mainMenu">
+                <p>Benutzername: </p>
+                <button id="btn">Start</button>
+                <p>Level: </p>
+                <button id ="btn">Levels</button><br />
+                <button id="btn">Einstellungen</button><br />
+                <button id="btn">Account bearbeiten</button><br />
+                <button id="btn">Abmelden</button><br />
+            </div>
+        </div>
+
+
 		<script>
-		
+
+                        
 			requestAnimFrame = (function() {
 			  return window.requestAnimationFrame ||
 				 window.webkitRequestAnimationFrame ||
@@ -77,10 +169,10 @@
 				stickmanObject.css('background-position-x', stickmanSpritePosition * 27.5);
 			}, 100);
 
-			var x = 0;
+			/*var x = 0;
 			setInterval(function () {
 			    x -= 1;
-			    $('body').css('background-position', x + 'px 0');
+			    $('.level').css('background-position', x + 'px 0');
 			}, 10);
 			
 			
@@ -96,8 +188,7 @@
 			bodyDef.set_type(Box2D.b2_dynamicBody);
 			bodyDef.set_position( new Box2D.b2Vec2(0.2, 4.0) );
 			var stickmanBody = world.CreateBody(bodyDef);
-			stickmanBody.SetFixedRotation(true);
-            
+			stickmanBody.SetFixedRotation(true);            
 			
 			var circleShape = new Box2D.b2CircleShape();
 			
@@ -115,10 +206,16 @@
             var platform2 = new Platform(3, 4, 5, 4);
             var platform3 = new Platform(6, 4.5, 8, 4.5);
 			var platform4 = new Platform(9, 5, 11, 5);
-			/*var platform5 = new Platform(4, 5.5, 5, 5.5);
-			var platform6 = new Platform(5, 6, 6, 6);
-			var platform7 = new Platform(6, 6.5, 7, 6.5);
-			var platform8 = new Platform(7, 7, 8, 7);*/
+			var platform5 = new Platform(12, 5.5, 14, 5.5);
+			var platform6 = new Platform(15, 6, 17, 6);
+			var platform7 = new Platform(18, 6.5, 20, 6.5);
+			var platform8 = new Platform(21, 7, 23, 7);
+			var platform9 = new Platform(24, 6.5, 26, 6.5);
+			var platform5 = new Platform(27, 5.5, 29, 5.5);
+			var platform6 = new Platform(30, 6, 32, 6);
+			var platform7 = new Platform(33, 6.5, 35, 6.5);
+			var platform8 = new Platform(36, 7, 38, 7);
+			var platform9 = new Platform(39, 6.5, 41, 6.5);
             
 			
 			// game loop
@@ -132,28 +229,45 @@
 			        platform2._update();
 			        platform3._update();
 			        platform4._update();
+			        platform5._update();
+			        platform6._update();
+			        platform7._update();
+			        platform8._update();
+			        platform9._update();
+
+
 			    },
 			
 			    update: function () {
 			        var v = stickmanBody.GetLinearVelocity();
-			        var impulse = new Box2D.b2Vec2(0, 0);			        
-					
-			        var v = stickmanBody.GetLinearVelocity();
-			        v.set_x(1);
-			        stickmanBody.SetLinearVelocity(v);
+			        var impulse = new Box2D.b2Vec2(0, 0);
+
+			        /*var v = stickmanBody.GetLinearVelocity();
+			        v.set_x(4);
+			        stickmanBody.SetLinearVelocity(v);*/
 
 					//v.set_x(5);
 					console.log(v.get_x());
 					
 					if (gameControls.right && v.get_x()<= 5) {
 
-			            /*var force = stickmanBody.GetMass() * 1 / (1 / 60);
+					    /*var force = stickmanBody.GetMass() * 1 / (1 / 60);
 			            force /= 7.0;
 			            stickmanBody.ApplyForce(new Box2D.b2Vec2(force, 0), stickmanBody.GetWorldCenter());*/
-					    /*var v = stickmanBody.GetLinearVelocity();
-					    v.set_x(1);
-					    stickmanBody.SetLinearVelocity(v);*/
-						
+					    var v = stickmanBody.GetLinearVelocity();
+					    v.set_x(4);
+					    stickmanBody.SetLinearVelocity(v);
+
+					    /*$('.level').css({ 'right': '0px', 'left': '' }).animate({
+					        'right' : '30px'    
+					    });
+
+					    var x = 0;
+					    setInterval(function () {
+					        x -= 1;
+					        $('.level').css('background-position', x + 'px 0');
+					    }, 1);*/
+
 			        }
 
 					if (gameControls.jump == true) {
@@ -167,14 +281,25 @@
 			            stickmanBody.SetLinearVelocity(v);
 			        }
 					
-			        stickmanBody.ApplyLinearImpulse(impulse, stickmanBody.GetWorldCenter());			        
+			        stickmanBody.ApplyLinearImpulse(impulse, stickmanBody.GetWorldCenter());
+
+			        
+
+                    
 			    },
 				
 			    draw: function() {
+			        var stickmanX = stickmanBody.GetPosition().get_x() * 100 - 7; // -7 because we want him centered
 			        stickmanObject.css({
 			            'bottom': stickmanBody.GetPosition().get_y() * 100,
-                        'left': stickmanBody.GetPosition().get_x() * 100 - 7 // -7 because we want him centered
-			        })
+			            'left': stickmanX
+			        });
+			        
+			        //$('.level:nth-child(0)')
+			        $( $('.level')[0] ).css({
+			            'left': Math.min(-stickmanX + 40, 0)
+			        });
+
 			    }
 			};
             		
@@ -196,10 +321,15 @@
 					    break;
 				    case 32:
 				        gameControls.jump = true;
+				        gameControls.right = true;
 				            
 				        break;
 				    case 37:
 				        gameControls.left = true;
+				        break;
+				    case 27:        //break game --> Menü, Continue
+				        gameControls.right = false;
+				        gameControls.jump = false;
 				        break;
 				}
 			});
@@ -224,12 +354,13 @@
 			
             // START
 
-			(function run() {
+            (function run() {
 			    loop.step();
 			    loop.update();
 			    loop.draw();
 			    requestAnimFrame(run);
 			})();
+            
 			
 		</script>
 	</body>

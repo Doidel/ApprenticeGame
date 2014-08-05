@@ -23,7 +23,7 @@ var Platform = function (ax, ay, bx, by) {
     //platformBodyDef.set_type(Box2D.b2_dynamicBody);
     
     platformBodyDef.set_type(Box2D.b2_kinematicBody);
-    platformBodyDef.set_linearVelocity(new Box2D.b2Vec2(-1, 0.0));
+    //platformBodyDef.set_linearVelocity(new Box2D.b2Vec2(-1, 0.0));
     
     this.groundBody = world.CreateBody(platformBodyDef);
 
@@ -81,7 +81,7 @@ Platform.prototype.draw = function () {
     if (this.options.element == undefined) {
         this.options.element = $("<div/>");
         this.options.element.addClass("platform");
-        $('body').append(this.options.element);
+        $('.level').append(this.options.element);
     }
     var styles = {
         'width': this.options.width + "px",
