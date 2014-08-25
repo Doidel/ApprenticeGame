@@ -27,7 +27,9 @@ var Platform = function (ax, ay, bx, by) {
     
     this.groundBody = world.CreateBody(platformBodyDef);
 
-    var edgeShape = new Box2D.Collision.Shapes.b2EdgeShape(new Box2D.Common.Math.b2Vec2(ax, ay), new Box2D.Common.Math.b2Vec2(bx, by));
+    //var edgeShape = new Box2D.Collision.Shapes.b2EdgeShape(new Box2D.Common.Math.b2Vec2(ax, ay), new Box2D.Common.Math.b2Vec2(bx, by));
+	var edgeShape = new Box2D.Collision.Shapes.b2PolygonShape();
+	edgeShape.SetAsEdge(new Box2D.Common.Math.b2Vec2(ax, ay), new Box2D.Common.Math.b2Vec2(bx, by))
 
     var fixtureDef = new Box2D.Dynamics.b2FixtureDef();
     fixtureDef.friction = 1;

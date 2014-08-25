@@ -102,13 +102,13 @@ var loop = {
         //v.set_x(5);
         console.log(v.x);
 
-        if (gameControls.right && v.get_x() <= 5) {
+        if (gameControls.right && v.x <= 5) {
 
             /*var force = stickmanBody.GetMass() * 1 / (1 / 60);
             force /= 7.0;
             stickmanBody.ApplyForce(new Box2D.b2Vec2(force, 0), stickmanBody.GetWorldCenter());*/
             var v = stickmanBody.GetLinearVelocity();
-            v.set_x(4);
+            v.x = 4;
             stickmanBody.SetLinearVelocity(v);
 
             /*$('.level').css({ 'right': '0px', 'left': '' }).animate({
@@ -208,7 +208,7 @@ var loop = {
 
         if (gameControls.left) {
             var v = stickmanBody.GetLinearVelocity();
-            v.set_x(-1);
+            v.x = -1;
             stickmanBody.SetLinearVelocity(v);
         }
 
