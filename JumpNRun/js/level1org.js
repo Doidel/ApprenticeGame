@@ -33,23 +33,23 @@ setInterval(function () {
 
 // 1 unit = 100 pixels
 
-var world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0.0, -9.81));
+var world = new Box2D.b2World(new Box2D.b2Vec2(0.0, -9.81));
 
 
 // stickman
-var bodyDef = new Box2D.Dynamics.b2BodyDef();
-bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody;
-bodyDef.position = new Box2D.Common.Math.b2Vec2(0.2, 4.0);
+var bodyDef = new Box2D.b2BodyDef();
+bodyDef.set_type(Box2D.b2_dynamicBody);
+bodyDef.set_position(new Box2D.b2Vec2(0.2, 4.0));
 var stickmanBody = world.CreateBody(bodyDef);
 stickmanBody.SetFixedRotation(true);
 
-var circleShape = new Box2D.Collision.Shapes.b2CircleShape();
+var circleShape = new Box2D.b2CircleShape();
 
-var stickmanFixtureDef = new Box2D.Dynamics.b2FixtureDef();
-circleShape.m_radius = 0.05;
-stickmanFixtureDef.density = 2.5;
-stickmanFixtureDef.friction = 0.5;
-stickmanFixtureDef.shape = circleShape;
+var stickmanFixtureDef = new Box2D.b2FixtureDef();
+circleShape.set_m_radius(0.05);
+stickmanFixtureDef.set_density(2.5);
+stickmanFixtureDef.set_friction(0.5);
+stickmanFixtureDef.set_shape(circleShape);
 stickmanBody.CreateFixture(stickmanFixtureDef);
 
 
@@ -92,7 +92,7 @@ var loop = {
     },
 
     update: function () {
-        var impulse = new Box2D.Common.Math.b2Vec2(0, 0);
+        var impulse = new Box2D.b2Vec2(0, 0);
         var v = stickmanBody.GetLinearVelocity();
 
         /*var v = stickmanBody.GetLinearVelocity();
@@ -100,7 +100,7 @@ var loop = {
         stickmanBody.SetLinearVelocity(v);*/
 
         //v.set_x(5);
-        console.log(v.x);
+        console.log(v.get_x());
 
         if (gameControls.right && v.get_x() <= 5) {
 
@@ -213,14 +213,14 @@ var loop = {
         }
 
  
-        stickmanBody.ApplyImpulse(impulse, stickmanBody.GetWorldCenter());
+        stickmanBody.ApplyLinearImpulse(impulse, stickmanBody.GetWorldCenter());
 
     },
 
     draw: function () {
-        var stickmanX = stickmanBody.GetPosition().x * 100 - 7; // -7 because we want him centered
+        var stickmanX = stickmanBody.GetPosition().get_x() * 100 - 7; // -7 because we want him centered
         stickmanObject.css({
-            'bottom': stickmanBody.GetPosition().y * 100,
+            'bottom': stickmanBody.GetPosition().get_y() * 100,
             'left': stickmanX
         });
 
